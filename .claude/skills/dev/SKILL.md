@@ -161,10 +161,32 @@ git remote -v
 ### 调用方式
 
 ```
-使用 Agent 工具，参数如下：
-- description: "Python 后端开发" (描述任务)
-- subagent_type: "dev-agent-python" (Agent 文件名，不含 .md 后缀)
-- prompt: <完整的任务信息>
+使用 Agent 工具，参数：
+- subagent_type: <根据 tech_stack 选择>
+- prompt: <包含完整任务信息的提示词>
+```
+
+### 传递给 Subagent 的 prompt 格式
+
+```markdown
+## 任务信息
+
+- **任务 ID**: TASK-001
+- **任务描述**: 开发用户登录页面
+- **验收标准**: 用户可以通过用户名密码登录
+- **输入文件**: docs/design/login.md
+- **输出目录**: frontend/
+- **依赖产出**: docs/design/, docs/architecture/api.md
+- **相关 API**:
+  - POST /api/login - 用户登录
+  - POST /api/logout - 用户登出
+- **迭代反馈**（如有）: <上轮审核反馈>
+
+## 工作目录
+
+当前在 worktree: worktrees/task-001/
+
+请根据以上信息开发代码。
 ```
 
 ### 技术栈映射
@@ -191,21 +213,7 @@ git remote -v
 
 ## 阶段三：执行开发
 
-### 传递给 Subagent 的参数
-
-dev 必须将以下信息完整传递给 Subagent：
-
-| 参数 | 来源 | 说明 |
-|------|------|------|
-| 任务描述 | tasks.json | 要做什么 |
-| 验收标准 | tasks.json | 做到什么程度 |
-| 输入文件 | tasks.json | 依赖什么（完整路径） |
-| 输出文件 | tasks.json | 产出什么 |
-| 依赖产出 | tasks.json | 需要哪些前置文档 |
-| **相关 API** | tasks.json.relevant_apis | 任务涉及的 API 摘要（如有） |
-| 迭代反馈 | 上轮 review | 如果是修复迭代，传递具体问题 |
-
-> **Token 优化**：只传递 `relevant_apis` 摘要（路径+方法+描述），不传完整定义在 `完整 API 定义。docs/architecture/api.md`，Subagent 需要时可自行读取。
+> 传递参数使用"调用方式"中定义的 prompt 格式，完整包含任务信息。
 
 ### 子任务处理逻辑
 
