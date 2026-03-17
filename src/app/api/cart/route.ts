@@ -9,7 +9,6 @@ export async function GET() {
     const cartId = cookieStore.get("cartId")?.value;
 
     if (!cartId) {
-      // Return empty cart if no cart exists
       return NextResponse.json({
         id: null,
         items: [],
@@ -44,7 +43,6 @@ export async function GET() {
       });
     }
 
-    // 格式化购物车数据
     const items = cart.items.map((item) => ({
       id: item.id,
       productId: item.productId,
@@ -86,11 +84,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 获取或创建购物车
     const cookieStore = await cookies();
     let cartId = cookieStore.get("cartId")?.value;
 
-    // Get product to verify it exists and get price
     const product = await prisma.product.findUnique({
       where: { id: productId, status: "active" },
     });
@@ -105,7 +101,6 @@ export async function POST(request: NextRequest) {
     let cart;
 
     if (!cartId) {
-      // Create new cart
       cart = await prisma.cart.create({
         data: {
           items: {
@@ -136,7 +131,6 @@ export async function POST(request: NextRequest) {
 
       cartId = cart.id;
     } else {
-      // Check if item with same specs already exists
       const existingItem = await prisma.cartItem.findFirst({
         where: {
           cartId,
@@ -146,7 +140,6 @@ export async function POST(request: NextRequest) {
       });
 
       if (existingItem) {
-        // Update quantity
         await prisma.cartItem.update({
           where: { id: existingItem.id },
           data: {
@@ -154,7 +147,6 @@ export async function POST(request: NextRequest) {
           },
         });
       } else {
-        // Add new item
         await prisma.cartItem.create({
           data: {
             cartId,
@@ -166,7 +158,6 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      // Fetch updated cart
       cart = await prisma.cart.findUnique({
         where: { id: cartId },
         include: {
@@ -214,12 +205,11 @@ export async function POST(request: NextRequest) {
       totalAmount,
     });
 
-    // Set cart cookie
     response.cookies.set("cartId", cartId, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 30, // 30 days
+      maxAge: 60 * 60 * 24 * 30,
     });
 
     return response;
