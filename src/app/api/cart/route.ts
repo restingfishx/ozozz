@@ -9,6 +9,7 @@ export async function GET() {
     const cartId = cookieStore.get("cartId")?.value;
 
     if (!cartId) {
+      // Return empty cart if no cart exists
       return NextResponse.json({
         id: null,
         items: [],
@@ -48,15 +49,15 @@ export async function GET() {
       id: item.id,
       productId: item.productId,
       productName: item.product.name,
-      productImage: item.product.images[0] || "",
-      specs: item.specs as Record<string, string>,
-      price: item.price,
+      productImage: item.product.images?.[0] || "",
+      specs: item.specs as Record<string, string> || {},
+      price: item.product.price,
       quantity: item.quantity,
-      subtotal: item.price * item.quantity,
-      stock: item.product.stock,
+      subtotal: item.product.price * item.quantity,
+      stock: item.product.stock || 0,
     }));
 
-    const totalAmount = items.reduce((sum: number, item: { subtotal: number }) => sum + item.subtotal, 0);
+    const totalAmount = items.reduce((sum, item) => sum + item.subtotal, 0);
 
     return NextResponse.json({
       id: cart.id,
@@ -80,25 +81,39 @@ export async function POST(request: NextRequest) {
 
     if (!productId || !quantity || quantity < 1) {
       return NextResponse.json(
-        { error: "Invalid product ID or quantity" },
+        { error: "Invalid product or quantity" },
         { status: 400 }
       );
     }
 
     // 获取或创建购物车
     const cookieStore = await cookies();
-    const cartId = cookieStore.get("cartId")?.value;
+    let cartId = cookieStore.get("cartId")?.value;
+
+    // Get product to verify it exists and get price
+    const product = await prisma.product.findUnique({
+      where: { id: productId, status: "active" },
+    });
+
+    if (!product) {
+      return NextResponse.json(
+        { error: "Product not found" },
+        { status: 404 }
+      );
+    }
 
     let cart;
+
     if (!cartId) {
+      // Create new cart
       cart = await prisma.cart.create({
         data: {
           items: {
             create: {
               productId,
+              price: product.price,
               quantity,
               specs: specs || {},
-              price: 0, // 暂时设为0，后面会更新
             },
           },
         },
@@ -119,89 +134,95 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      // 设置 cookie
-      const response = NextResponse.json(formatCart(cart));
-      response.cookies.set("cartId", cart.id, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 60 * 60 * 24 * 30, // 30 天
+      cartId = cart.id;
+    } else {
+      // Check if item with same specs already exists
+      const existingItem = await prisma.cartItem.findFirst({
+        where: {
+          cartId,
+          productId,
+          specs: specs || {},
+        },
       });
-      return response;
+
+      if (existingItem) {
+        // Update quantity
+        await prisma.cartItem.update({
+          where: { id: existingItem.id },
+          data: {
+            quantity: existingItem.quantity + quantity,
+          },
+        });
+      } else {
+        // Add new item
+        await prisma.cartItem.create({
+          data: {
+            cartId,
+            productId,
+            price: product.price,
+            quantity,
+            specs: specs || {},
+          },
+        });
+      }
+
+      // Fetch updated cart
+      cart = await prisma.cart.findUnique({
+        where: { id: cartId },
+        include: {
+          items: {
+            include: {
+              product: {
+                select: {
+                  id: true,
+                  name: true,
+                  images: true,
+                  price: true,
+                  stock: true,
+                },
+              },
+            },
+          },
+        },
+      });
     }
 
-    // 检查商品是否已存在
-    const existingItem = await prisma.cartItem.findFirst({
-      where: {
-        cartId,
-        productId,
-        specs: specs || {},
-      },
+    if (!cart) {
+      return NextResponse.json(
+        { error: "Failed to update cart" },
+        { status: 500 }
+      );
+    }
+
+    const items = cart.items.map((item) => ({
+      id: item.id,
+      productId: item.productId,
+      productName: item.product.name,
+      productImage: item.product.images?.[0] || "",
+      specs: item.specs as Record<string, string> || {},
+      price: item.product.price,
+      quantity: item.quantity,
+      subtotal: item.product.price * item.quantity,
+      stock: item.product.stock || 0,
+    }));
+
+    const totalAmount = items.reduce((sum, item) => sum + item.subtotal, 0);
+
+    const response = NextResponse.json({
+      id: cart.id,
+      items,
+      totalAmount,
     });
 
-    if (existingItem) {
-      // 更新数量
-      cart = await prisma.cart.update({
-        where: { id: cartId },
-        data: {
-          items: {
-            update: {
-              where: { id: existingItem.id },
-              data: {
-                quantity: existingItem.quantity + quantity,
-              },
-            },
-          },
-        },
-        include: {
-          items: {
-            include: {
-              product: {
-                select: {
-                  id: true,
-                  name: true,
-                  images: true,
-                  price: true,
-                  stock: true,
-                },
-              },
-            },
-          },
-        },
-      });
-    } else {
-      // 添加新商品
-      cart = await prisma.cart.update({
-        where: { id: cartId },
-        data: {
-          items: {
-            create: {
-              productId,
-              quantity,
-              specs: specs || {},
-              price: 0,
-            },
-          },
-        },
-        include: {
-          items: {
-            include: {
-              product: {
-                select: {
-                  id: true,
-                  name: true,
-                  images: true,
-                  price: true,
-                  stock: true,
-                },
-              },
-            },
-          },
-        },
-      });
-    }
+    // Set cart cookie
+    response.cookies.set("cartId", cartId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+    });
 
-    return NextResponse.json(formatCart(cart));
+    return response;
   } catch (error) {
     console.error("Error adding to cart:", error);
     return NextResponse.json(
@@ -209,33 +230,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
-
-// 格式化购物车数据
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function formatCart(cart: any) {
-  if (!cart) {
-    return { id: null, items: [], totalAmount: 0 };
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const items = cart.items.map((item: any) => ({
-    id: item.id,
-    productId: item.productId,
-    productName: item.product?.name || "",
-    productImage: item.product?.images?.[0] || "",
-    specs: item.specs as Record<string, string>,
-    price: item.product?.price || item.price,
-    quantity: item.quantity,
-    subtotal: (item.product?.price || item.price) * item.quantity,
-    stock: item.product?.stock || 0,
-  }));
-
-  const totalAmount = items.reduce((sum: number, item: { subtotal: number }) => sum + item.subtotal, 0);
-
-  return {
-    id: cart.id,
-    items,
-    totalAmount,
-  };
 }
