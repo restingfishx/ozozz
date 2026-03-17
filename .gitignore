@@ -38,7 +38,9 @@ package-lock.json
 
 # claude
 /.claude
+CLAUDE.md
 subtasks.json
+tasks.json
 
 # typescript
 *.tsbuildinfo
