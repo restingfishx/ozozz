@@ -24,9 +24,9 @@ export function OrderSummary({ items, totalAmount, shipping = 0, tax = 0 }: Orde
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
-      <h2 className="text-lg font-semibold mb-4">订单摘要</h2>
+      <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
 
-      {/* 商品列表 */}
+      {/* Items */}
       <div className="space-y-4 mb-6">
         {items.map((item) => (
           <div key={item.id} className="flex gap-4">
@@ -57,24 +57,24 @@ export function OrderSummary({ items, totalAmount, shipping = 0, tax = 0 }: Orde
         ))}
       </div>
 
-      {/* 费用明细 */}
+      {/* Summary */}
       <div className="border-t pt-4 space-y-2">
         <div className="flex justify-between text-sm">
-          <span className="text-gray-600">商品小计</span>
+          <span className="text-gray-600">Subtotal</span>
           <span>¥{subtotal.toFixed(2)}</span>
         </div>
         <div className="flex justify-between text-sm">
-          <span className="text-gray-600">运费</span>
-          <span>{shipping === 0 ? '免运费' : `¥${shipping.toFixed(2)}`}</span>
+          <span className="text-gray-600">Shipping</span>
+          <span>{shipping === 0 ? 'Free' : `¥${shipping.toFixed(2)}`}</span>
         </div>
         {tax > 0 && (
           <div className="flex justify-between text-sm">
-            <span className="text-gray-600">税费</span>
+            <span className="text-gray-600">Tax</span>
             <span>¥{tax.toFixed(2)}</span>
           </div>
         )}
         <div className="flex justify-between text-lg font-semibold pt-2 border-t mt-2">
-          <span>合计</span>
+          <span>Total</span>
           <span>¥{grandTotal.toFixed(2)}</span>
         </div>
       </div>
