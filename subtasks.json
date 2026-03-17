@@ -1,0 +1,33 @@
+{
+  "task_id": "TASK-005",
+  "subtasks": [
+    {
+      "id": 1,
+      "name": "筛选功能：分类筛选、价格区间",
+      "status": "completed"
+    },
+    {
+      "id": 2,
+      "name": "排序功能：价格/销量/新品排序",
+      "status": "completed"
+    },
+    {
+      "id": 3,
+      "name": "搜索功能：关键词搜索",
+      "status": "completed"
+    },
+    {
+      "id": 4,
+      "name": "分页功能：页码切换",
+      "status": "completed"
+    },
+    {
+      "id": 5,
+      "name": "页面布局：响应式设计",
+      "status": "completed"
+    }
+  ],
+  "current": 6,
+  "created_at": "2026-03-18T00:58:44.785729Z",
+  "updated_at": "2026-03-18T01:03:42.542471Z"
+}
