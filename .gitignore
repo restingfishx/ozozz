@@ -36,6 +36,10 @@ package-lock.json
 # worktrees
 /worktrees
 
+# claude
+/.claude
+subtasks.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
