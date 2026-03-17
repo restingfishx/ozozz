@@ -75,7 +75,7 @@ export default function CartPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">加载中...</div>
+        <div className="text-lg">Loading...</div>
       </div>
     );
   }
@@ -83,21 +83,21 @@ export default function CartPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold mb-8">购物车</h1>
+        <h1 className="text-2xl font-bold mb-8">Shopping Cart</h1>
 
         {cart.items.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-gray-500 mb-4">购物车是空的</p>
+            <p className="text-gray-500 mb-4">Your cart is empty</p>
             <Link
               href="/products"
               className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
-              去购物
+              Shop Now
             </Link>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* 商品列表 */}
+            {/* Items */}
             <div className="lg:col-span-2 space-y-4">
               {cart.items.map((item) => (
                 <div
@@ -152,16 +152,16 @@ export default function CartPage() {
               ))}
             </div>
 
-            {/* 结算 */}
+            {/* Summary */}
             <div className="bg-white rounded-lg shadow-sm p-6 h-fit sticky top-4">
-              <h2 className="text-lg font-semibold mb-4">订单总结</h2>
+              <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
               <div className="space-y-2 mb-4">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">商品总数</span>
+                  <span className="text-gray-600">Total Items</span>
                   <span>{cart.items.reduce((sum, item) => sum + item.quantity, 0)}</span>
                 </div>
                 <div className="flex justify-between text-lg font-semibold pt-2 border-t">
-                  <span>合计</span>
+                  <span>Subtotal</span>
                   <span>¥{cart.totalAmount}</span>
                 </div>
               </div>
@@ -169,7 +169,7 @@ export default function CartPage() {
                 href="/checkout"
                 className="block w-full py-3 bg-blue-600 text-white text-center rounded-lg hover:bg-blue-700"
               >
-                去结算
+                Checkout
               </Link>
             </div>
           </div>
