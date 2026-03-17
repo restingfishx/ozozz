@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 
+// 获取购物车
 export async function GET() {
   try {
     const cookieStore = await cookies();
@@ -26,6 +27,8 @@ export async function GET() {
                 id: true,
                 name: true,
                 images: true,
+                price: true,
+                stock: true,
               },
             },
           },
@@ -41,15 +44,17 @@ export async function GET() {
       });
     }
 
+    // 格式化购物车数据
     const items = cart.items.map((item) => ({
       id: item.id,
       productId: item.productId,
       productName: item.product.name,
       productImage: item.product.images?.[0] || "",
       specs: item.specs as Record<string, string> || {},
-      price: item.price,
+      price: item.product.price,
       quantity: item.quantity,
-      subtotal: item.price * item.quantity,
+      subtotal: item.product.price * item.quantity,
+      stock: item.product.stock || 0,
     }));
 
     const totalAmount = items.reduce((sum, item) => sum + item.subtotal, 0);
@@ -68,6 +73,7 @@ export async function GET() {
   }
 }
 
+// 添加商品到购物车
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -80,6 +86,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // 获取或创建购物车
     const cookieStore = await cookies();
     let cartId = cookieStore.get("cartId")?.value;
 
@@ -118,12 +125,15 @@ export async function POST(request: NextRequest) {
                   id: true,
                   name: true,
                   images: true,
+                  price: true,
+                  stock: true,
                 },
               },
             },
           },
         },
       });
+
       cartId = cart.id;
     } else {
       // Check if item with same specs already exists
@@ -167,6 +177,8 @@ export async function POST(request: NextRequest) {
                   id: true,
                   name: true,
                   images: true,
+                  price: true,
+                  stock: true,
                 },
               },
             },
@@ -188,9 +200,10 @@ export async function POST(request: NextRequest) {
       productName: item.product.name,
       productImage: item.product.images?.[0] || "",
       specs: item.specs as Record<string, string> || {},
-      price: item.price,
+      price: item.product.price,
       quantity: item.quantity,
-      subtotal: item.price * item.quantity,
+      subtotal: item.product.price * item.quantity,
+      stock: item.product.stock || 0,
     }));
 
     const totalAmount = items.reduce((sum, item) => sum + item.subtotal, 0);

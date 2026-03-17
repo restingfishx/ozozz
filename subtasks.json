@@ -1,33 +1,28 @@
 {
-  "task_id": "TASK-006",
+  "task_id": "TASK-007",
   "subtasks": [
     {
       "id": 1,
-      "name": "多图展示：主图、缩略图切换、图片放大",
+      "name": "购物车列表：展示商品、规格、价格",
       "status": "completed"
     },
     {
       "id": 2,
-      "name": "规格选择：颜色、尺寸等规格",
+      "name": "数量修改：增加/减少数量",
       "status": "completed"
     },
     {
       "id": 3,
-      "name": "加购功能：数量选择、加入购物车",
+      "name": "删除商品：从购物车移除",
       "status": "completed"
     },
     {
       "id": 4,
-      "name": "API：商品详情接口",
-      "status": "completed"
-    },
-    {
-      "id": 5,
-      "name": "API：购物车接口",
+      "name": "合计金额：实时计算总价",
       "status": "completed"
     }
   ],
-  "current": 6,
-  "created_at": "2026-03-18T01:26:27.661913Z",
-  "updated_at": "2026-03-18T01:28:38.889061Z"
+  "current": 5,
+  "created_at": "2026-03-18T01:49:40.491889Z",
+  "updated_at": "2026-03-18T01:56:04.430923Z"
 }
