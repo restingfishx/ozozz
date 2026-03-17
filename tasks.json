@@ -94,7 +94,7 @@
           "description": "商品列表（筛选/排序/搜索）"
         }
       ],
-      "status": "pending"
+      "status": "pending_review"
     },
     {
       "id": "TASK-006",
