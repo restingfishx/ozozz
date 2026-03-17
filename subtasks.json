@@ -1,33 +1,33 @@
 {
-  "task_id": "TASK-005",
+  "task_id": "TASK-006",
   "subtasks": [
     {
       "id": 1,
-      "name": "筛选功能：分类筛选、价格区间",
+      "name": "多图展示：主图、缩略图切换、图片放大",
       "status": "completed"
     },
     {
       "id": 2,
-      "name": "排序功能：价格/销量/新品排序",
+      "name": "规格选择：颜色、尺寸等规格",
       "status": "completed"
     },
     {
       "id": 3,
-      "name": "搜索功能：关键词搜索",
+      "name": "加购功能：数量选择、加入购物车",
       "status": "completed"
     },
     {
       "id": 4,
-      "name": "分页功能：页码切换",
+      "name": "API：商品详情接口",
       "status": "completed"
     },
     {
       "id": 5,
-      "name": "页面布局：响应式设计",
+      "name": "API：购物车接口",
       "status": "completed"
     }
   ],
   "current": 6,
-  "created_at": "2026-03-18T00:58:44.785729Z",
-  "updated_at": "2026-03-18T01:03:42.542471Z"
+  "created_at": "2026-03-18T01:26:27.661913Z",
+  "updated_at": "2026-03-18T01:28:38.889061Z"
 }
