@@ -42,6 +42,9 @@ CLAUDE.md
 subtasks.json
 tasks.json
 
+# docs
+/docs
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
