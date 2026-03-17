@@ -160,7 +160,7 @@
           "description": "删除购物车商品"
         }
       ],
-      "status": "pending"
+      "status": "pending_review"
     },
     {
       "id": "TASK-008",
