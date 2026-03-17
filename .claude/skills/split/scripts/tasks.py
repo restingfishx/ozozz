@@ -102,6 +102,7 @@ def cmd_batch():
             continue
 
         # 设置默认值
+        # 任务初始状态都为 pending，依赖检查在 unlock 时处理
         task.setdefault("status", "pending")
         task.setdefault("iteration", 0)
         task.setdefault("iterations", [])
@@ -201,6 +202,88 @@ def cmd_get(task_id):
     print(f"✗ 任务 {task_id} 不存在")
 
 
+def cmd_unlock():
+    """检查并解锁依赖已满足的任务"""
+    data = load_tasks()
+
+    unlocked = []
+    blocked = []  # 记录仍被阻塞的任务
+    for task in data["tasks"]:
+        # 只检查 pending 状态的任务
+        if task["status"] != "pending":
+            continue
+
+        # 检查 depends_on 字段
+        depends_on = task.get("depends_on", [])
+        if not depends_on:
+            # 没有依赖的任务，保持 pending 状态
+            continue
+
+        # 检查所有依赖任务是否都已完成
+        all_deps_completed = True
+        unmet_deps = []
+        for dep_id in depends_on:
+            dep_task = next((t for t in data["tasks"] if t["id"] == dep_id), None)
+            if not dep_task:
+                all_deps_completed = False
+                unmet_deps.append(f"{dep_id}(不存在)")
+            elif dep_task["status"] not in ["completed", "deployed"]:
+                all_deps_completed = False
+                unmet_deps.append(f"{dep_id}({dep_task['status']})")
+
+        # 如果所有依赖都已完成，保持 pending 状态（可执行）
+        # 如果有依赖未完成，标记为被阻塞
+        if all_deps_completed:
+            unlocked.append(task["id"])
+        else:
+            blocked.append(f"{task['id']}: 等待 {', '.join(unmet_deps)}")
+
+    # 显示结果
+    if unlocked:
+        print(f"✓ 可执行任务: {', '.join(unlocked)}")
+    if blocked:
+        print(f"⏳ 被阻塞任务:")
+        for b in blocked:
+            print(f"  - {b}")
+    if not unlocked and not blocked:
+        print("没有需要处理的任务")
+
+
+def cmd_check_deps(task_id):
+    """检查任务依赖状态"""
+    data = load_tasks()
+
+    task = next((t for t in data["tasks"] if t["id"] == task_id), None)
+    if not task:
+        print(f"✗ 任务 {task_id} 不存在")
+        return
+
+    depends_on = task.get("depends_on", [])
+    if not depends_on:
+        print(f"任务 {task_id} 没有依赖")
+        return
+
+    print(f"任务 {task_id} 的依赖状态:")
+    for dep_id in depends_on:
+        dep_task = next((t for t in data["tasks"] if t["id"] == dep_id), None)
+        if dep_task:
+            status_icon = {
+                "pending": "⏳",
+                "pending_design": "🎨",
+                "pending_arch": "🏗️",
+                "in_progress": "🔄",
+                "pending_review": "👀",
+                "pending_fix": "🔧",
+                "completed": "✅",
+                "deployed": "🚀",
+                "blocked": "❌"
+            }.get(dep_task["status"], "?")
+
+            print(f"  {status_icon} {dep_id}: {dep_task['status']}")
+        else:
+            print(f"  ❌ {dep_id}: 不存在")
+
+
 def usage():
     """显示用法"""
     print("""tasks.json 操作脚本
@@ -214,6 +297,8 @@ def usage():
   python tasks.py iter <id> <agent> <结果> <反馈>  添加迭代记录
   python tasks.py get <id>                获取任务详情
   python tasks.py list                    列出所有任务
+  python tasks.py unlock                  检查并解锁依赖已满足的任务
+  python tasks.py deps <id>               检查任务依赖状态
 
 示例:
   python tasks.py init
@@ -223,6 +308,8 @@ def usage():
   python tasks.py update TASK-001 in_progress
   python tasks.py iter TASK-001 dev-agent-react "不通过" "代码有bug"
   python tasks.py get TASK-001
+  python tasks.py unlock
+  python tasks.py deps TASK-002
 """)
 
 
@@ -268,6 +355,15 @@ def main():
             print("用法: python tasks.py get <id>")
             sys.exit(1)
         cmd_get(sys.argv[2])
+
+    elif cmd == "unlock":
+        cmd_unlock()
+
+    elif cmd == "deps":
+        if len(sys.argv) < 3:
+            print("用法: python tasks.py deps <id>")
+            sys.exit(1)
+        cmd_check_deps(sys.argv[2])
 
     else:
         print(f"未知命令: {cmd}")

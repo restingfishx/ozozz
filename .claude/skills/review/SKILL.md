@@ -28,6 +28,7 @@ disable-model-invocation: false
 - 任务清单不存在 → 提示用户先执行 /split
 - 状态不是 pending_review → 提示当前状态
 - 没有待审核任务 → 使用 `/status` 查看所有任务状态
+- **如果用户没有填原因，需要引导他填写原因**
 
 ---
 
@@ -58,12 +59,15 @@ disable-model-invocation: false
 ```bash
 python .claude/skills/split/scripts/tasks.py update <task-id> completed
 python .claude/skills/split/scripts/tasks.py iter <task-id> review "通过" ""
+python .claude/skills/split/scripts/tasks.py unlock
+git pull origin $(git branch --show-current)
 ```
 
 输出：
 ```
 ✅ TASK-001 审核通过
 状态已更新：pending_review → completed
+🔓 已解锁依赖此任务的其他任务
 ```
 
 ### 审核不通过
@@ -127,6 +131,5 @@ python .claude/skills/split/scripts/tasks.py iter <task-id> review "不通过" "
 
 ## 重要规则
 
-- **不关心 GitHub 操作**：PR 创建、合并等由 dev 阶段处理
 - **只处理用户告知的审核结果**：用户说通过就通过，说不通过就不通过
 - **必须明确告知结果**：通过/不通过 + 原因（不通过时）

@@ -32,9 +32,15 @@ disable-model-invocation: false
    - 所有任务状态设为 `pending_arch`
    - 等待 ARCH 完成后，状态自动变为 `pending`
 
-3. **自动解锁**：
+3. **任务依赖处理**：
+   - 所有任务初始状态为 `pending`
+   - 调用 `unlock` 命令时，检查依赖是否满足
+   - 依赖未满足的任务，在 unlock 时显示被阻塞
+
+4. **自动解锁**：
    - 当 DESIGN 或 ARCH 完成后，用户触发 `/dev TASK-XXX`
    - 系统自动检测依赖就绪，将 `pending_design` → `pending`
+   - 当依赖任务完成时，调用 `python tasks.py unlock` 自动解锁
 
 ### 校验不通过时
 
@@ -172,10 +178,11 @@ ARCH 目录包含多个文件，DEV 阶段按需检查：
 | Swift + iOS | dev-agent-ios |
 | Swift + macOS | dev-agent-macos |
 | Kotlin + Android | dev-agent-android |
+| DBA | dev-agent-dba |
+| DevOps | dev-agent-devops |
 
 > **注意**：
 > - 数据库设计 → 在 ARCH 阶段完成
-> - DevOps → 用户单独操作
 > - 测试 → 由 Subagent 在开发过程中执行
 
 ### 任务示例
@@ -280,7 +287,6 @@ python .claude/skills/split/scripts/tasks.py get TASK-001
 | `pending_fix` | 需修复（审核不通过） | ✅ |
 | `completed` | 已完成 | ❌ |
 | `deployed` | 已部署 | ❌ |
-| `blocked` | 被阻塞（遗留） | ❌ |
 | `deploy_failed` | 部署失败 | ❌ |
 
 ### 迭代记录格式

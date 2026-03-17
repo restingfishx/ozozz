@@ -14,7 +14,7 @@
       ],
       "tech_stack": "Next.js + TypeScript",
       "relevant_apis": [],
-      "status": "pending_review"
+      "status": "completed"
     },
     {
       "id": "TASK-002",
@@ -28,7 +28,7 @@
       ],
       "tech_stack": "Prisma + PostgreSQL",
       "relevant_apis": [],
-      "status": "pending"
+      "status": "completed"
     },
     {
       "id": "TASK-003",
@@ -45,7 +45,7 @@
       ],
       "tech_stack": "React + Next.js + Tailwind",
       "relevant_apis": [],
-      "status": "pending"
+      "status": "completed"
     },
     {
       "id": "TASK-004",
@@ -69,7 +69,7 @@
           "description": "获取商品列表（热销、新品）"
         }
       ],
-      "status": "pending"
+      "status": "completed"
     },
     {
       "id": "TASK-005",

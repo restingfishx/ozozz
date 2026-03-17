@@ -22,9 +22,8 @@ disable-model-invocation: false
 2. **tasks.json 存在**：确保任务清单已创建
 3. **所有任务已完成**：
    - 所有任务状态为 `completed` 或 `deployed`
-   - 无 `pending`、`in_progress`、`pending_review`、`pending_fix`、`blocked` 状态的任务
-4. **无阻塞任务**：没有状态为 `blocked` 的任务
-5. **GitHub 仓库已初始化**（如需推送到远程）：
+   - 无 `pending`、`pending_design`、`pending_arch`、`in_progress`、`pending_review`、`pending_fix` 状态的任务
+4. **GitHub 仓库已初始化**（如需推送到远程）：
    - 检查 `git remote -v` 确认远程仓库已配置
 
 ### GitHub 登录引导

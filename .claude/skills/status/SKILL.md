@@ -37,7 +37,6 @@ python .claude/skills/split/scripts/tasks.py get TASK-001
 - `pending_fix` - 需修复
 - `completed` - 已完成
 - `deployed` - 已部署
-- `blocked` - 被阻塞
 
 ### 检查依赖产出
 
@@ -108,4 +107,4 @@ python .claude/skills/split/scripts/tasks.py get TASK-001
 
 - 任务状态为 `pending_design` 时，告诉用户可以先开发后端任务
 - 任务状态为 `pending_arch` 时，告诉用户 ARCH 尚未完成
-- 如果任务被阻塞（blocked），显示具体的阻塞原因
+- 运行 `python tasks.py unlock` 查看任务依赖状态
