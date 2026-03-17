@@ -1,5 +1,7 @@
+import Stripe from 'stripe';
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { stripe } from "@/lib/stripe";
 import { cookies } from "next/headers";
 import { randomBytes } from "crypto";
 import { Prisma } from "@prisma/client";
@@ -114,8 +116,51 @@ export async function POST(request: NextRequest) {
       where: { cartId },
     });
 
-    // 注意：Stripe 集成暂时跳过，返回空 checkoutUrl
-    const checkoutUrl = "";
+    // Create Stripe Checkout Session
+    let checkoutUrl = '';
+    let stripeSessionId = '';
+
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: order.orderItems.map((item) => ({
+          price_data: {
+            currency: order.currency.toLowerCase(),
+            product_data: {
+              name: item.productName,
+              images: item.productImage ? [item.productImage] : [],
+              metadata: {
+                productId: item.productId,
+                specs: JSON.stringify(item.specs),
+              },
+            },
+            unit_amount: Math.round(item.price * 100), // Convert to cents
+          },
+          quantity: item.quantity,
+        })),
+        mode: 'payment',
+        success_url: `${baseUrl}/payment/success/${order.id}?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${baseUrl}/payment/cancel?orderId=${order.id}`,
+        metadata: {
+          orderId: order.id,
+          orderNumber: order.orderNumber,
+        },
+      });
+
+      checkoutUrl = session.url || '';
+      stripeSessionId = session.id;
+
+      // Update order with stripe session id
+      await prisma.order.update({
+        where: { id: order.id },
+        data: { stripeSessionId },
+      });
+    } catch (stripeError) {
+      console.error('Error creating Stripe checkout session:', stripeError);
+      // Continue without Stripe checkout URL
+    }
 
     return NextResponse.json({
       order: {
