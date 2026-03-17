@@ -44,6 +44,7 @@ tasks.json
 
 # docs
 /docs
+USER_MANUAL.md
 
 # typescript
 *.tsbuildinfo
