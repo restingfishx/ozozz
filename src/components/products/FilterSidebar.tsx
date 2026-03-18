@@ -56,10 +56,10 @@ export default function FilterSidebar({
     filters.category || filters.minPrice || filters.maxPrice;
 
   const sortOptions = [
-    { value: "newest", label: "最新" },
-    { value: "price_asc", label: "价格：从低到高" },
-    { value: "price_desc", label: "价格：从高到低" },
-    { value: "sales", label: "销量优先" },
+    { value: "newest", label: "Newest" },
+    { value: "price_asc", label: "Price: Low to High" },
+    { value: "price_desc", label: "Price: High to Low" },
+    { value: "sales", label: "Best Selling" },
   ] as const;
 
   return (
@@ -67,7 +67,7 @@ export default function FilterSidebar({
       <div className="bg-white rounded-lg border border-border-light p-4">
         {/* Sort */}
         <div className="mb-6">
-          <h3 className="text-sm font-medium text-text-primary mb-3">排序</h3>
+          <h3 className="text-sm font-medium text-text-primary mb-3">Sort</h3>
           <select
             value={filters.sort || "newest"}
             onChange={(e) => handleSortChange(e.target.value as ProductFilters["sort"])}
@@ -83,7 +83,7 @@ export default function FilterSidebar({
 
         {/* Category Filter */}
         <div className="mb-6">
-          <h3 className="text-sm font-medium text-text-primary mb-3">分类</h3>
+          <h3 className="text-sm font-medium text-text-primary mb-3">Category</h3>
           <div className="space-y-2">
             {categories.map((category) => (
               <label
@@ -106,11 +106,11 @@ export default function FilterSidebar({
 
         {/* Price Filter */}
         <div className="mb-6">
-          <h3 className="text-sm font-medium text-text-primary mb-3">价格区间</h3>
+          <h3 className="text-sm font-medium text-text-primary mb-3">Price Range</h3>
           <div className="flex items-center gap-2">
             <input
               type="number"
-              placeholder="最低"
+              placeholder="Min"
               value={priceRange.min}
               onChange={(e) =>
                 setPriceRange({ ...priceRange, min: e.target.value })
@@ -121,7 +121,7 @@ export default function FilterSidebar({
             <span className="text-text-tertiary">-</span>
             <input
               type="number"
-              placeholder="最高"
+              placeholder="Max"
               value={priceRange.max}
               onChange={(e) =>
                 setPriceRange({ ...priceRange, max: e.target.value })
@@ -138,7 +138,7 @@ export default function FilterSidebar({
             onClick={clearFilters}
             className="w-full py-2 text-sm text-text-secondary hover:text-primary transition-colors border border-border rounded-lg hover:border-primary"
           >
-            清除筛选
+            Clear Filters
           </button>
         )}
       </div>
