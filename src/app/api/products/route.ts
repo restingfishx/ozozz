@@ -6,12 +6,12 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
 
-    // 分页参数
+    // Pagination params
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "12");
     const skip = (page - 1) * limit;
 
-    // 筛选参数
+    // Filter params
     const category = searchParams.get("category");
     const minPrice = searchParams.get("minPrice")
       ? parseFloat(searchParams.get("minPrice")!)
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search") || undefined;
     const sort = searchParams.get("sort") || "newest";
 
-    // 构建查询条件
+    // Build query conditions
     const where: Prisma.ProductWhereInput = {
       status: "active",
     };
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    // 构建排序
+    // Build sorting
     let orderBy: Prisma.ProductOrderByWithRelationInput = { createdAt: "desc" };
     switch (sort) {
       case "price_asc":
@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
         break;
     }
 
-    // 查询数据
+    // Query data
     const [products, total] = await Promise.all([
       prisma.product.findMany({
         where,

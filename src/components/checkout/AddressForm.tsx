@@ -224,10 +224,10 @@ export function AddressForm({ onSubmit, initialData }: AddressFormProps) {
         {errors.district && <p className="text-red-500 text-sm mt-1">{errors.district}</p>}
       </div>
 
-      {/* Detailed Address */}
+      {/* Address */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Detailed Address <span className="text-red-500">*</span>
+          Address <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
@@ -236,7 +236,7 @@ export function AddressForm({ onSubmit, initialData }: AddressFormProps) {
           className={`w-full h-11 px-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent ${
             errors.detail ? 'border-red-500' : 'border-gray-300'
           }`}
-          placeholder="Street, building, unit number, etc."
+          placeholder="Street, building, unit, etc."
         />
         {errors.detail && <p className="text-red-500 text-sm mt-1">{errors.detail}</p>}
       </div>

@@ -1,7 +1,5 @@
-import Stripe from 'stripe';
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { stripe } from "@/lib/stripe";
 import { cookies } from "next/headers";
 import { randomBytes } from "crypto";
 import { Prisma } from "@prisma/client";
@@ -22,30 +20,30 @@ interface CreateOrderRequest {
   address: Address;
 }
 
-// 生成订单号
+// Generate order number
 function generateOrderNumber(): string {
   const timestamp = Date.now().toString(36).toUpperCase();
   const random = randomBytes(4).toString("hex").toUpperCase();
   return `ORD${timestamp}${random}`;
 }
 
-// 创建订单
+// Create order
 export async function POST(request: NextRequest) {
   try {
     const body: CreateOrderRequest = await request.json();
     const { cartId, address } = body;
 
-    // 验证必填字段
+    // Validate required fields
     if (!cartId) {
       return NextResponse.json(
-        { error: "购物车 ID 不能为空" },
+        { error: "Cart ID is required" },
         { status: 400 }
       );
     }
 
     if (!address) {
       return NextResponse.json(
-        { error: "收货地址不能为空" },
+        { error: "Shipping address is required" },
         { status: 400 }
       );
     }
@@ -54,13 +52,13 @@ export async function POST(request: NextRequest) {
     for (const field of requiredFields) {
       if (!address[field as keyof Address]) {
         return NextResponse.json(
-          { error: `收货地址 ${field} 不能为空` },
+          { error: `Shipping address ${field} is required` },
           { status: 400 }
         );
       }
     }
 
-    // 获取购物车
+    // Get cart
     const cart = await prisma.cart.findUnique({
       where: { id: cartId },
       include: {
@@ -74,21 +72,21 @@ export async function POST(request: NextRequest) {
 
     if (!cart || cart.items.length === 0) {
       return NextResponse.json(
-        { error: "购物车为空" },
+        { error: "Cart is empty" },
         { status: 400 }
       );
     }
 
-    // 计算订单金额
+    // Calculate order amount
     const totalAmount = cart.items.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0
     );
 
-    // 生成订单号
+    // Generate order number
     const orderNumber = generateOrderNumber();
 
-    // 创建订单和订单项
+    // Create order and order items
     const order = await prisma.order.create({
       data: {
         orderNumber,
@@ -111,56 +109,13 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // 清空购物车
+    // Clear cart
     await prisma.cartItem.deleteMany({
       where: { cartId },
     });
 
-    // Create Stripe Checkout Session
-    let checkoutUrl = '';
-    let stripeSessionId = '';
-
-    try {
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-
-      const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        line_items: order.orderItems.map((item) => ({
-          price_data: {
-            currency: order.currency.toLowerCase(),
-            product_data: {
-              name: item.productName,
-              images: item.productImage ? [item.productImage] : [],
-              metadata: {
-                productId: item.productId,
-                specs: JSON.stringify(item.specs),
-              },
-            },
-            unit_amount: Math.round(item.price * 100), // Convert to cents
-          },
-          quantity: item.quantity,
-        })),
-        mode: 'payment',
-        success_url: `${baseUrl}/payment/success/${order.id}?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${baseUrl}/payment/cancel?orderId=${order.id}`,
-        metadata: {
-          orderId: order.id,
-          orderNumber: order.orderNumber,
-        },
-      });
-
-      checkoutUrl = session.url || '';
-      stripeSessionId = session.id;
-
-      // Update order with stripe session id
-      await prisma.order.update({
-        where: { id: order.id },
-        data: { stripeSessionId },
-      });
-    } catch (stripeError) {
-      console.error('Error creating Stripe checkout session:', stripeError);
-      // Continue without Stripe checkout URL
-    }
+    // Note: Skip Stripe integration for now, return empty checkoutUrl
+    const checkoutUrl = "";
 
     return NextResponse.json({
       order: {
@@ -186,13 +141,13 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Error creating order:", error);
     return NextResponse.json(
-      { error: "订单创建失败" },
+      { error: "Failed to create order" },
       { status: 500 }
     );
   }
 }
 
-// 获取订单列表
+// Get order list
 export async function GET(request: NextRequest) {
   try {
     const cookieStore = await cookies();
@@ -211,9 +166,9 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "12");
 
-    // 获取该购物车关联的订单
-    // 注意：由于订单不直接关联 cartId，需要通过订单项间接查询
-    // 这里简化处理，返回所有订单
+    // Get orders associated with the cart
+    // Note: Since orders don't directly link to cartId, we need to query through order items
+    // Simplified: return all orders
     const skip = (page - 1) * limit;
 
     const [orders, total] = await Promise.all([
@@ -257,7 +212,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error fetching orders:", error);
     return NextResponse.json(
-      { error: "获取订单列表失败" },
+      { error: "Failed to fetch orders" },
       { status: 500 }
     );
   }

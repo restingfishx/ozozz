@@ -47,7 +47,7 @@ export default function CheckoutPage() {
 
   const handleAddressSubmit = async (address: AddressFormData) => {
     if (!cart.id) {
-      setError('Cart is empty, cannot place order');
+      setError('Cart is empty, cannot submit order');
       return;
     }
 
@@ -70,15 +70,15 @@ export default function CheckoutPage() {
         throw new Error(data.error || 'Failed to create order');
       }
 
-      // Order created successfully, clear cart and redirect or show success
+      // Order created successfully
       setOrderSuccess(true);
 
-      // If there's a checkout URL, redirect to payment
+      // Redirect to payment if checkout URL exists
       if (data.checkoutUrl) {
         window.location.href = data.checkoutUrl;
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Order creation failed, please try again');
+      setError(err instanceof Error ? err.message : 'Failed to create order, please try again');
     } finally {
       setSubmitting(false);
     }
@@ -92,18 +92,18 @@ export default function CheckoutPage() {
     );
   }
 
-  // Cart is empty
+  // Empty cart
   if (cart.items.length === 0 && !orderSuccess) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-xl font-semibold mb-4">Your cart is empty</h2>
-          <p className="text-gray-500 mb-6">Please add items to your cart first</p>
+          <p className="text-gray-500 mb-6">Please add some products to your cart first</p>
           <Link
             href="/products"
             className="inline-block px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800"
           >
-            Start Shopping
+            Shop Now
           </Link>
         </div>
       </div>
@@ -130,13 +130,13 @@ export default function CheckoutPage() {
               />
             </svg>
           </div>
-          <h2 className="text-xl font-semibold mb-2">Order Placed Successfully</h2>
+          <h2 className="text-xl font-semibold mb-2">Order Submitted Successfully</h2>
           <p className="text-gray-500 mb-6">Your order has been placed successfully</p>
           <Link
             href="/orders"
             className="inline-block px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800"
           >
-            View Orders
+            View Order
           </Link>
         </div>
       </div>
@@ -172,7 +172,7 @@ export default function CheckoutPage() {
                   disabled={submitting}
                   className="w-full h-12 bg-black text-white rounded-lg font-medium hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  {submitting ? 'Submitting...' : 'Place Order'}
+                  {submitting ? 'Submitting...' : 'Submit Order'}
                 </button>
               </div>
             </div>

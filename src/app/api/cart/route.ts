@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 
-// 获取购物车
+// Get cart
 export async function GET() {
   try {
     const cookieStore = await cookies();
@@ -71,7 +71,7 @@ export async function GET() {
   }
 }
 
-// 添加商品到购物车
+// Add item to cart
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
