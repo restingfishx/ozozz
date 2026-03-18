@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 interface OrderItem {
   id: string;
@@ -39,12 +40,12 @@ interface Order {
 }
 
 // Status mapping
-const statusMap: Record<string, { label: string; color: string }> = {
-  pending: { label: 'Pending Payment', color: 'bg-yellow-100 text-yellow-800' },
-  paid: { label: 'Paid', color: 'bg-blue-100 text-blue-800' },
-  shipped: { label: 'Shipped', color: 'bg-purple-100 text-purple-800' },
-  completed: { label: 'Completed', color: 'bg-green-100 text-green-800' },
-  cancelled: { label: 'Cancelled', color: 'bg-red-100 text-red-800' },
+const statusMap: Record<string, { label: string; variant: 'default' | 'success' | 'warning' | 'info' | 'error' }> = {
+  pending: { label: 'Pending Payment', variant: 'warning' },
+  paid: { label: 'Paid', variant: 'info' },
+  shipped: { label: 'Shipped', variant: 'default' },
+  completed: { label: 'Completed', variant: 'success' },
+  cancelled: { label: 'Cancelled', variant: 'error' },
 };
 
 function formatDate(dateString: string): string {
@@ -53,6 +54,13 @@ function formatDate(dateString: string): string {
     month: 'short',
     day: 'numeric',
   });
+}
+
+function formatPrice(price: number): string {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(price);
 }
 
 export default function OrdersPage() {
@@ -84,49 +92,51 @@ export default function OrdersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-bg">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold mb-8">My Orders</h1>
 
         {orders.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-gray-500 mb-4">You have no orders yet</p>
-            <Link
-              href="/products"
-              className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-            >
-              Shop Now
+            <p className="text-text-tertiary mb-4">You have no orders yet</p>
+            <Link href="/products">
+              <Button>Shop Now</Button>
             </Link>
           </div>
         ) : (
           <div className="space-y-6">
             {orders.map((order) => {
-              const status = statusMap[order.status] || { label: order.status, color: 'bg-gray-100 text-gray-800' };
+              const status = statusMap[order.status] || { label: order.status, variant: 'default' as const };
               return (
-                <div key={order.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div key={order.id} className="bg-card rounded-lg shadow-sm overflow-hidden">
                   {/* Order Header */}
-                  <div className="bg-gray-50 px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+                  <div className="bg-bg-secondary px-6 py-4 flex flex-wrap items-center justify-between gap-4">
                     <div className="flex flex-wrap items-center gap-6">
                       <div>
-                        <span className="text-sm text-gray-500">Order No.</span>
-                        <p className="font-medium">{order.orderNo}</p>
+                        <span className="text-sm text-text-tertiary">Order No.</span>
+                        <p className="font-medium text-text-primary">{order.orderNo}</p>
                       </div>
                       <div>
-                        <span className="text-sm text-gray-500">Order Date</span>
-                        <p className="font-medium">{formatDate(order.createdAt)}</p>
+                        <span className="text-sm text-text-tertiary">Order Date</span>
+                        <p className="font-medium text-text-primary">{formatDate(order.createdAt)}</p>
                       </div>
                       <div>
-                        <span className="text-sm text-gray-500">Status</span>
-                        <span className={`inline-block mt-1 px-3 py-1 rounded-full text-xs font-medium ${status.color}`}>
-                          {status.label}
-                        </span>
+                        <span className="text-sm text-text-tertiary">Status</span>
+                        <div className="mt-1">
+                          <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
+                            status.variant === 'success' ? 'bg-success/10 text-success' :
+                            status.variant === 'warning' ? 'bg-warning/10 text-warning' :
+                            status.variant === 'error' ? 'bg-error/10 text-error' :
+                            status.variant === 'info' ? 'bg-info/10 text-info' :
+                            'bg-gray-100 text-text-secondary'
+                          }`}>
+                            {status.label}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                    <Link
-                      href={`/orders/${order.id}`}
-                      className="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50"
-                    >
-                      View Details
+                    <Link href={`/orders/${order.id}`}>
+                      <Button variant="secondary" size="sm">View Details</Button>
                     </Link>
                   </div>
 
@@ -135,7 +145,7 @@ export default function OrdersPage() {
                     <div className="space-y-4">
                       {order.items.map((item) => (
                         <div key={item.id} className="flex gap-4">
-                          <div className="w-20 h-20 bg-gray-200 rounded-md overflow-hidden flex-shrink-0">
+                          <div className="w-20 h-20 bg-bg-secondary rounded-md overflow-hidden flex-shrink-0">
                             {item.productImage && (
                               <img
                                 src={item.productImage}
@@ -145,30 +155,30 @@ export default function OrdersPage() {
                             )}
                           </div>
                           <div className="flex-1">
-                            <h3 className="font-medium">{item.productName}</h3>
+                            <h3 className="font-medium text-text-primary">{item.productName}</h3>
                             {item.specs && Object.keys(item.specs).length > 0 && (
-                              <p className="text-sm text-gray-500">
+                              <p className="text-sm text-text-tertiary">
                                 {Object.entries(item.specs)
                                   .map(([k, v]) => `${k}: ${v}`)
                                   .join(', ')}
                               </p>
                             )}
-                            <p className="text-sm text-gray-500 mt-1">
-                              ${item.price} x {item.quantity}
+                            <p className="text-sm text-text-secondary mt-1">
+                              {formatPrice(item.price)} x {item.quantity}
                             </p>
                           </div>
                           <div className="text-right">
-                            <p className="font-medium">${item.subtotal.toFixed(2)}</p>
+                            <p className="font-medium text-text-primary">{formatPrice(item.subtotal)}</p>
                           </div>
                         </div>
                       ))}
                     </div>
 
                     {/* Order Total */}
-                    <div className="mt-4 pt-4 border-t flex justify-end">
+                    <div className="mt-4 pt-4 border-t border-border flex justify-end">
                       <div className="text-right">
-                        <span className="text-gray-500">Total: </span>
-                        <span className="text-xl font-bold">${order.totalAmount.toFixed(2)}</span>
+                        <span className="text-text-secondary">Total: </span>
+                        <span className="text-xl font-bold text-text-primary">{formatPrice(order.totalAmount)}</span>
                       </div>
                     </div>
                   </div>
