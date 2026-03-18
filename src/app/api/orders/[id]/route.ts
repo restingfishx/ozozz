@@ -5,7 +5,7 @@ interface Params {
   params: Promise<{ id: string }>;
 }
 
-// 获取订单详情
+// Get order details
 export async function GET(request: NextRequest, { params }: Params) {
   try {
     const { id } = await params;
