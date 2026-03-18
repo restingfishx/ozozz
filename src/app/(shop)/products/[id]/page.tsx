@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -8,11 +8,11 @@ import { cn, formatPrice } from "@/lib/utils";
 import type { Product, ProductSpec, Cart } from "@/types";
 
 interface ProductDetailPageProps {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }
 
 export default function ProductDetailPage({ params }: ProductDetailPageProps) {
-  const { id: productId } = use(params);
+  const productId = params.id;
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
