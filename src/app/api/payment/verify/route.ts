@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     }
 
     // If there's a stripe session, check its status
-    if (order.stripeSessionId) {
+    if (stripe && order.stripeSessionId) {
       try {
         const session = await stripe.checkout.sessions.retrieve(
           order.stripeSessionId

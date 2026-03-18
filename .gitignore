@@ -37,14 +37,8 @@ package-lock.json
 /worktrees
 
 # claude
-/.claude
-CLAUDE.md
-subtasks.json
-tasks.json
 
 # docs
-/docs
-USER_MANUAL.md
 
 # typescript
 *.tsbuildinfo

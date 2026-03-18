@@ -1,12 +1,7 @@
-'use client';
+import Link from "next/link";
+import { Suspense } from "react";
 
-import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-
-export default function PaymentCancelPage() {
-  const searchParams = useSearchParams();
-  const orderId = searchParams.get('orderId');
-
+function PaymentCancelContent() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="text-center max-w-md mx-auto px-4">
@@ -31,21 +26,12 @@ export default function PaymentCancelPage() {
         </p>
 
         <div className="flex flex-col gap-3">
-          {orderId ? (
-            <Link
-              href={`/payment/success/${orderId}`}
-              className="w-full h-12 bg-black text-white rounded-lg font-medium hover:bg-gray-800 flex items-center justify-center"
-            >
-              Try Payment Again
-            </Link>
-          ) : (
-            <Link
-              href="/checkout"
-              className="w-full h-12 bg-black text-white rounded-lg font-medium hover:bg-gray-800 flex items-center justify-center"
-            >
-              Try Payment Again
-            </Link>
-          )}
+          <Link
+            href="/checkout"
+            className="w-full h-12 bg-black text-white rounded-lg font-medium hover:bg-gray-800 flex items-center justify-center"
+          >
+            Try Payment Again
+          </Link>
           <Link
             href="/products"
             className="w-full h-12 bg-white border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 flex items-center justify-center"
@@ -55,5 +41,19 @@ export default function PaymentCancelPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PaymentCancelPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-lg">Loading...</div>
+        </div>
+      }
+    >
+      <PaymentCancelContent />
+    </Suspense>
   );
 }

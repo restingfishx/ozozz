@@ -120,10 +120,11 @@ export async function POST(request: NextRequest) {
     let checkoutUrl = '';
     let stripeSessionId = '';
 
-    try {
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    if (stripe) {
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
-      const session = await stripe.checkout.sessions.create({
+        const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         line_items: order.orderItems.map((item) => ({
           price_data: {
@@ -160,6 +161,7 @@ export async function POST(request: NextRequest) {
     } catch (stripeError) {
       console.error('Error creating Stripe checkout session:', stripeError);
       // Continue without Stripe checkout URL
+    }
     }
 
     return NextResponse.json({

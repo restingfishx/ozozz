@@ -3,6 +3,14 @@ import { stripe } from '@/lib/stripe';
 import { prisma } from '@/lib/prisma';
 
 export async function POST(request: NextRequest) {
+  // Return early if stripe is not configured
+  if (!stripe) {
+    return NextResponse.json(
+      { error: 'Stripe is not configured' },
+      { status: 503 }
+    );
+  }
+
   const body = await request.text();
   const signature = request.headers.get('stripe-signature');
 
@@ -21,8 +29,8 @@ export async function POST(request: NextRequest) {
       signature,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
-  } catch (err) {
-    console.error('Webhook signature verification failed:', err);
+  } catch {
+    console.error('Webhook signature verification failed');
     return NextResponse.json(
       { error: 'Webhook signature verification failed' },
       { status: 400 }
