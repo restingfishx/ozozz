@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { use, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,8 @@ interface ProductDetailPageProps {
 }
 
 export default function ProductDetailPage({ params }: ProductDetailPageProps) {
+  const { id: productId } = use(params);
+
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -32,14 +34,6 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
   const [cartMessage, setCartMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   // Get product ID from params
-  const [productId, setProductId] = useState<string>("");
-
-  useEffect(() => {
-    params.then((p) => {
-      setProductId(p.id);
-    });
-  }, [params]);
-
   // Fetch product data
   useEffect(() => {
     if (!productId) return;
