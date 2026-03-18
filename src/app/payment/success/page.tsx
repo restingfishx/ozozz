@@ -2,7 +2,6 @@
 
 import { useEffect, useState, use } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
 
 interface OrderInfo {
   id: string;
@@ -13,7 +12,6 @@ interface OrderInfo {
 
 export default function PaymentSuccessPage({ params }: { params: Promise<{ orderId: string }> }) {
   const resolvedParams = use(params);
-  const searchParams = useSearchParams();
   const [order, setOrder] = useState<OrderInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +35,7 @@ export default function PaymentSuccessPage({ params }: { params: Promise<{ order
       } else {
         setError(data.error || 'Payment verification failed');
       }
-    } catch (err) {
+    } catch {
       setError('Failed to verify payment');
     } finally {
       setLoading(false);
