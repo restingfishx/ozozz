@@ -1,8 +1,42 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { prisma } from "@/lib/prisma";
 
-export default function AdminDashboard() {
+async function getStats() {
+  // Get total orders count
+  const totalOrders = await prisma.order.count();
+
+  // Get total sales (sum of all paid orders)
+  const totalSalesResult = await prisma.order.aggregate({
+    _sum: {
+      totalAmount: true,
+    },
+    where: {
+      status: {
+        in: ["paid", "shipped", "completed"],
+      },
+    },
+  });
+  const totalSales = totalSalesResult._sum.totalAmount || 0;
+
+  // Get pending orders count
+  const pendingOrders = await prisma.order.count({
+    where: {
+      status: "pending",
+    },
+  });
+
+  return {
+    totalOrders,
+    totalSales,
+    pendingOrders,
+  };
+}
+
+export default async function AdminDashboard() {
+  const stats = await getStats();
+
   return (
     <div>
       <h1 className="text-2xl font-semibold text-text-primary mb-6">Dashboard</h1>
@@ -15,7 +49,9 @@ export default function AdminDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-text-primary">-</div>
+            <div className="text-3xl font-bold text-text-primary">
+              {stats.totalOrders}
+            </div>
             <p className="text-xs text-text-tertiary mt-1">View all orders</p>
           </CardContent>
         </Card>
@@ -27,7 +63,9 @@ export default function AdminDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-text-primary">-</div>
+            <div className="text-3xl font-bold text-text-primary">
+              ${stats.totalSales.toFixed(2)}
+            </div>
             <p className="text-xs text-text-tertiary mt-1">Revenue overview</p>
           </CardContent>
         </Card>
@@ -35,12 +73,14 @@ export default function AdminDashboard() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-text-secondary">
-              Active Products
+              Pending Orders
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-text-primary">-</div>
-            <p className="text-xs text-text-tertiary mt-1">Manage products</p>
+            <div className="text-3xl font-bold text-text-primary">
+              {stats.pendingOrders}
+            </div>
+            <p className="text-xs text-text-tertiary mt-1">Orders awaiting processing</p>
           </CardContent>
         </Card>
       </div>
