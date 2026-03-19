@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
+import { formatPrice } from "@/lib/utils";
 
 async function getStats() {
   // Get total orders count
@@ -64,7 +65,7 @@ export default async function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-text-primary">
-              ${stats.totalSales.toFixed(2)}
+              {formatPrice(stats.totalSales)}
             </div>
             <p className="text-xs text-text-tertiary mt-1">Revenue overview</p>
           </CardContent>
