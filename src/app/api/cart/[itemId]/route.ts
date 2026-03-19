@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 
-// 更新购物车商品数量
+// Update cart item quantity
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ itemId: string }> }
@@ -34,7 +34,7 @@ export async function PATCH(
   }
 }
 
-// 删除购物车商品
+// Delete cart item
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ itemId: string }> }

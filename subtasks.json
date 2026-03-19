@@ -1,33 +1,28 @@
 {
-  "task_id": "TASK-013",
+  "task_id": "TASK-014",
   "subtasks": [
     {
       "id": 1,
-      "name": "Create admin product API routes",
+      "name": "Order List",
       "status": "completed"
     },
     {
       "id": 2,
-      "name": "Create product list page",
+      "name": "Order Detail",
       "status": "completed"
     },
     {
       "id": 3,
-      "name": "Create add product page",
+      "name": "Update Status",
       "status": "completed"
     },
     {
       "id": 4,
-      "name": "Create edit product page",
-      "status": "completed"
-    },
-    {
-      "id": 5,
-      "name": "Implement delete and toggle status functions",
+      "name": "Add Tracking Number",
       "status": "completed"
     }
   ],
-  "current": 6,
-  "created_at": "2026-03-18T22:58:23.989120Z",
-  "updated_at": "2026-03-18T23:12:33.992466Z"
+  "current": 5,
+  "created_at": "2026-03-19T00:00:37.270708Z",
+  "updated_at": "2026-03-19T00:07:08.131118Z"
 }

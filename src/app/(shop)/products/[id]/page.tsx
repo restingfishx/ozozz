@@ -8,10 +8,12 @@ import { cn, formatPrice } from "@/lib/utils";
 import type { Product, ProductSpec, Cart } from "@/types";
 
 interface ProductDetailPageProps {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }
 
 export default function ProductDetailPage({ params }: ProductDetailPageProps) {
+  const productId = params.id;
+
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -32,14 +34,6 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
   const [cartMessage, setCartMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   // Get product ID from params
-  const [productId, setProductId] = useState<string>("");
-
-  useEffect(() => {
-    params.then((p) => {
-      setProductId(p.id);
-    });
-  }, [params]);
-
   // Fetch product data
   useEffect(() => {
     if (!productId) return;

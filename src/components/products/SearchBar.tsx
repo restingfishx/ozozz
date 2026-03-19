@@ -67,7 +67,7 @@ export default function SearchBar({ filters }: SearchBarProps) {
             type="text"
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            placeholder="搜索商品..."
+            placeholder="Search products..."
             className="w-full px-4 py-2.5 pl-10 border border-border rounded-lg text-sm focus:outline-none focus:border-primary"
           />
           <svg
@@ -88,7 +88,7 @@ export default function SearchBar({ filters }: SearchBarProps) {
           type="submit"
           className="px-4 py-2.5 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-light transition-colors"
         >
-          搜索
+          Search
         </button>
         {searchValue && (
           <button
@@ -96,7 +96,7 @@ export default function SearchBar({ filters }: SearchBarProps) {
             onClick={handleClear}
             className="px-3 py-2.5 text-sm text-text-secondary hover:text-primary transition-colors"
           >
-            清除
+            Clear
           </button>
         )}
       </div>

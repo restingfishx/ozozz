@@ -52,7 +52,7 @@ export default function Pagination({
         disabled={currentPage === 1}
         className="px-3 py-2 text-sm rounded-lg border border-border disabled:opacity-50 disabled:cursor-not-allowed hover:border-primary transition-colors"
       >
-        上一页
+        Prev
       </button>
 
       {/* Page Numbers */}
@@ -84,7 +84,7 @@ export default function Pagination({
         disabled={currentPage === totalPages}
         className="px-3 py-2 text-sm rounded-lg border border-border disabled:opacity-50 disabled:cursor-not-allowed hover:border-primary transition-colors"
       >
-        下一页
+        Next
       </button>
     </div>
   );

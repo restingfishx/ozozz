@@ -4,8 +4,8 @@ import ProductsList from "@/components/products/ProductsList";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "商品列表 - Ozozz",
-  description: "浏览我们的全部商品",
+  title: "Products - Ozozz",
+  description: "Browse all our products",
 };
 
 function ProductsListFallback() {

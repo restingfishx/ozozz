@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
-    // 获取所有不重复的分类
+    // Get all distinct categories
     const categories = await prisma.product.findMany({
       where: {
         status: "active",

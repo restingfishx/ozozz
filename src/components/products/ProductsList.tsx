@@ -111,17 +111,17 @@ export default function ProductsList() {
             <ol className="flex items-center gap-1">
               <li>
                 <a href="/" className="hover:text-primary transition-colors">
-                  首页
+                  Home
                 </a>
               </li>
               <li>/</li>
-              <li className="text-text-secondary">商品列表</li>
+              <li className="text-text-secondary">Products</li>
             </ol>
           </nav>
 
           {/* Title & Search */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <h1 className="text-2xl font-semibold">全部商品</h1>
+            <h1 className="text-2xl font-semibold">All Products</h1>
             <SearchBar filters={filters} />
           </div>
 
@@ -133,7 +133,7 @@ export default function ProductsList() {
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
             </svg>
-            筛选
+            Filter
             {(filters.category || filters.minPrice || filters.maxPrice) && (
               <span className="w-2 h-2 bg-accent rounded-full" />
             )}
@@ -160,7 +160,7 @@ export default function ProductsList() {
               <div className="mb-4 flex flex-wrap items-center gap-2">
                 {filters.search && (
                   <span className="inline-flex items-center gap-1 px-3 py-1 bg-bg-secondary text-sm rounded-full">
-                    关键词: {filters.search}
+                    Keyword: {filters.search}
                     <button
                       onClick={() =>
                         handleFilterChange({ ...filters, search: undefined, page: 1 })
@@ -175,7 +175,7 @@ export default function ProductsList() {
                 )}
                 {filters.category && (
                   <span className="inline-flex items-center gap-1 px-3 py-1 bg-bg-secondary text-sm rounded-full">
-                    分类: {filters.category}
+                    Category: {filters.category}
                     <button
                       onClick={() =>
                         handleFilterChange({ ...filters, category: undefined, page: 1 })
@@ -193,7 +193,7 @@ export default function ProductsList() {
 
             {/* Results Count */}
             <p className="text-sm text-text-secondary mb-4">
-              共 {pagination.total} 件商品
+              {pagination.total} products found
             </p>
 
             {/* Loading */}
@@ -213,12 +213,12 @@ export default function ProductsList() {
                 <svg className="w-16 h-16 mx-auto text-text-tertiary mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                 </svg>
-                <p className="text-text-secondary">没有找到相关商品</p>
+                <p className="text-text-secondary">No products found</p>
                 <button
                   onClick={() => router.push("/products")}
                   className="mt-4 text-primary hover:underline"
                 >
-                  清除筛选条件
+                  Clear Filters
                 </button>
               </div>
             ) : (
