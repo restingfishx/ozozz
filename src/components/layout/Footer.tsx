@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export function Footer() {
   return (
@@ -7,8 +8,15 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           {/* Brand */}
           <div className="md:col-span-1">
-            <Link href="/" className="text-2xl font-bold text-primary">
-              Ozozz
+            <Link href="/">
+              <Image
+                src="/logo.png"
+                alt="Ozozz"
+                width={100}
+                height={33}
+                className="h-auto w-auto"
+                style={{ height: 'auto', width: 'auto' }}
+              />
             </Link>
             <p className="mt-4 text-small text-text-secondary">
               Premium sleep & lifestyle products designed for the modern Z-generation.
