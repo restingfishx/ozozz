@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +27,14 @@ export function Header() {
         <div className="flex h-16 items-center justify-between md:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <span className="text-2xl font-bold text-primary">Ozozz</span>
+            <Image
+              src="/logo.png"
+              alt="Ozozz"
+              width={120}
+              height={40}
+              className="h-auto w-auto"
+              style={{ height: 'auto', width: 'auto' }}
+            />
           </Link>
 
           {/* Navigation - Desktop */}
